@@ -1,0 +1,9 @@
+User Request: {{.UserInput}}
+
+{{ if .HasSearch }}
+{{template "search_results.txt" .SearchResults}}
+{{ end }}
+
+{{ if ne .Response "" }}
+Assistant Response: {{- .Response}}
+{{ end }}

@@ -1,0 +1,4 @@
+github.com/gorilla/mux v1.8.1 h1:TuBL49tXwgrFYWhqrNgrUNEY92u81SPhu7sTdzQEiWY=
+github.com/gorilla/mux v1.8.1/go.mod h1:AKf9I4AEqPTmMytcMc0KkNouC66V3BtZ4qD5fmWSiMQ=
+github.com/serpapi/serpapi-golang v0.0.0-20231231211704-c29ca33d5c25 h1:vuAkIs92FNha9QPf93rO52YYcRHG0aDmxXDN2O/giu4=
+github.com/serpapi/serpapi-golang v0.0.0-20231231211704-c29ca33d5c25/go.mod h1:xVL4PnCuCPwkXhVVQysVrX3hEv7nWnIbfnDj2B+hsPw=

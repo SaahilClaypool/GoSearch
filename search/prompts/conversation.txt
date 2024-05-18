@@ -1,0 +1,4 @@
+{{range .Rounds}}
+{{template "round.txt" .}}
+---
+{{end}}

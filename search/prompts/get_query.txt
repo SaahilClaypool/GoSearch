@@ -1,0 +1,21 @@
+Here is a conversation the user is having.
+The user wants us to answer or do the following: {{.Input}}
+
+Respond with the best google search query to provide information on results to help with that task.
+
+Examples:
+---
+Input: Write a function in c# to invert a linked list
+Output { "Query": "stackoverflow.com c# invert linked list" }
+
+Input: Where was george washington born?
+Output { "Query": "wikipedia.org george washington place of birth" }
+
+Input: Where can I adopt dogs in Florida?
+Output { "Query": "Adopt dogs florida" }
+---
+
+{{.PreviousMessage}}
+
+Now, here is users request - what search would you perform to answer the question or request: {{.Input}}
+Output your response in JSON with a single field for the "Query"
