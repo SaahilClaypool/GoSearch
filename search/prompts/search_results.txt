@@ -2,8 +2,9 @@ Ignore search results that are irrelevant.
 Search results for "{{.Query}}"
 ===========================
 
-{{range .Results}}
-- [{{.Title}}]({{.Url}})
+{{range $i, $r := .Results}}
+{{$i}}. {{$r.Title}} ({{$r.Url}})
+
 {{.Summary}}
 _____________________________
 {{end}}

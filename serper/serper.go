@@ -15,7 +15,7 @@ type Serper struct {
 	apiKey string
 }
 
-func CreateSearcher(apiKey string) Serper {
+func CreateClient(apiKey string) Serper {
 	return Serper{apiKey: apiKey}
 }
 

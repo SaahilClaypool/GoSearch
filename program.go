@@ -8,23 +8,35 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/saahilclaypool/GoSearch/search"
-	"github.com/saahilclaypool/GoSearch/serper"
 )
+
+type Output struct {
+	V string `json:"output"`
+}
 
 func main() {
 	llm := search.CreateLLM("https://api.groq.com/openai/v1", os.Getenv("GROQ_API_KEY"), "llama3-70b-8192", "Exclude all introductions. Answer concisely and use well-formatted markdown.")
-	searcher := serper.CreateSearcher(os.Getenv("SERPER_API_KEY"))
-	converser := search.CreateConverser(llm, searcher)
+	// searcher := serper.CreateClient(os.Getenv("SERPER_API_KEY"))
+	searcher := search.RgaConfig{}
+	converser := search.CreateApp(llm, &searcher)
+	o, _ := search.LLMJson(llm, "add the word apple to the end of each input",
+		"This is a longer sentence",
+		[]search.JEx[string, Output]{
+			{Input: "test", Output: &Output{V: "testapple"}},
+			{Input: "this is two", Output: &Output{V: "this is twoapple"}},
+		})
+	fmt.Printf("output is: %s\n", o.V)
 	if len(os.Args) < 2 {
 		fmt.Println("TODO: start server")
 		return
 	}
 	if os.Args[1] == "test" {
-		test(converser)
+		// test(converser)
+		_ = converser
 	}
 }
 
-func test(conv search.Converser) {
+func test(conv search.App) {
 	c := conv.CreateConversation()
 	prompt := "> "
 	fmt.Print(prompt)
@@ -46,11 +58,6 @@ func test(conv search.Converser) {
 		fmt.Fprintln(os.Stderr, "reading standard input:", err)
 	}
 
-}
-
-type Person struct {
-	Name string
-	Age  int
 }
 
 func startServer() bool {

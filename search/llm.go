@@ -15,7 +15,7 @@ import (
 type LLM interface {
 	Chat(prompt string) (chan (string), error)
 	Complete(prompt string) (string, error)
-	GetResult(prompt string, obj any) error
+	GetJson(prompt string, obj any) error
 }
 
 type OpenAILLM struct {
@@ -109,7 +109,7 @@ func (llm OpenAILLM) makePrompt(prompt string, responseType ResponseType) ChatRe
 	return request
 }
 
-func (llm OpenAILLM) GetResult(message string, object any) error {
+func (llm OpenAILLM) GetJson(message string, object any) error {
 	respBody, err := llm.complete(message, true)
 	if err != nil {
 		return err

@@ -1,0 +1,39 @@
+You will label each search result as something that "has answer", "read more", or "unrelated".
+Label the result as "hasAnswer" when the summary of the result has the information needed to answer the user request.
+Label the result as "readMore" when the summary of the result is related, but the answer is probably in the article itself.
+Label the result as "unrelated" when the article doesn't seem like it'd help answer the user's request.
+
+
+Examples:
+---
+User Query: When was the USA founded as a country
+Search Results:
+---
+1. USA Wiki (https://wikipedia.com/usa)
+... The USA was founded in 18 July 4, 1776 ...
+---
+2. USA Today (https://usatoday.com)
+... The USA was first founded as a nation by ...
+---
+3. France Today (https://france oday.com)
+... The France was first founded as a nation by ...
+
+Response:
+[
+    { "index": 1, "title": "USA Wiki", "label": "has answer" }
+    { "index": 2, "title": "USA Today", "label": "read more" }
+    { "index": 3, "title": "France Today", "label": "unrelated" }
+]
+---
+
+User Query: {{.Round.UserInput}}
+
+Do any of these search results seem like they'd answer the question provided by the user?
+For each search result, label if it would be worth reading to answer the question.
+
+Search Results:
+{{template "search_results.txt" .Round.SearchResults}}
+
+Respond in JSON in the format { "title": "<article title>", "readMore": false } where "readMore" is true when the user should continue reading.
+
+Examples:

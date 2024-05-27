@@ -1,26 +1,20 @@
 package search
 
 import (
-	"bytes"
 	"fmt"
-	"log"
-	"os"
-	"path/filepath"
-	"strings"
-	"text/template"
 )
 
 var gid int = 0
 var convos map[int]*Conversation = make(map[int]*Conversation)
 
-func CreateConverser(llm LLM, searcher Searcher) Converser {
-	return Converser{
+func CreateApp(llm LLM, searcher Searcher) App {
+	return App{
 		searcher: searcher,
 		llm:      llm,
 	}
 }
 
-type Converser struct {
+type App struct {
 	searcher Searcher
 	llm      LLM
 }
@@ -37,7 +31,7 @@ type Round struct {
 	Response      string
 }
 
-func (c *Converser) CreateConversation() *Conversation {
+func (c *App) CreateConversation() *Conversation {
 	id := gid
 	gid++
 	rounds := make([]Round, 0, 1)
@@ -48,11 +42,11 @@ func (c *Converser) CreateConversation() *Conversation {
 	return convos[id]
 }
 
-func (ctx *Converser) GetConversation(id int) *Conversation {
+func (ctx *App) GetConversation(id int) *Conversation {
 	return convos[id]
 }
 
-func (c Converser) Reply(id int, input string) (string, *Conversation, error) {
+func (c App) Reply(id int, input string) (string, *Conversation, error) {
 	convo := convos[id]
 	round := Round{UserInput: input}
 	query, err := c.getQuery(convo, input)
@@ -66,7 +60,7 @@ func (c Converser) Reply(id int, input string) (string, *Conversation, error) {
 	}
 	round.HasSearch = true
 	round.SearchResults = searchResults
-	prompt, err := renderT("reply.txt", struct {
+	prompt, err := renderT("summarize.txt", struct {
 		Context Conversation
 		Round   Round
 	}{Context: *convo, Round: round})
@@ -81,7 +75,7 @@ func (c Converser) Reply(id int, input string) (string, *Conversation, error) {
 	return response, nil, nil
 }
 
-func (c *Converser) getQuery(convo *Conversation, input string) (string, error) {
+func (c *App) getQuery(convo *Conversation, input string) (string, error) {
 
 	ctx, err := convo.format()
 	if err != nil {
@@ -102,7 +96,7 @@ func (c *Converser) getQuery(convo *Conversation, input string) (string, error) 
 		return "", err
 	}
 	r := struct{ Query string }{}
-	c.llm.GetResult(s, &r)
+	c.llm.GetJson(s, &r)
 
 	return r.Query, nil
 
@@ -110,40 +104,4 @@ func (c *Converser) getQuery(convo *Conversation, input string) (string, error) 
 
 func (conversation Conversation) format() (string, error) {
 	return renderT("conversation.txt", conversation)
-}
-
-var templates *template.Template
-
-func renderT(templateName string, data any) (string, error) {
-	if templates == nil {
-		templates = parseTemplates()
-	}
-	var tpl bytes.Buffer
-	if err := templates.ExecuteTemplate(&tpl, templateName, data); err != nil {
-		return "", err
-	}
-
-	return tpl.String(), nil
-}
-
-func parseTemplates() *template.Template {
-	templ := template.New("")
-	err := filepath.Walk("./search/prompts", func(path string, info os.FileInfo, err error) error {
-		if strings.Contains(path, ".txt") {
-			_, err := templ.ParseFiles(path)
-			if err != nil {
-				log.Println(err)
-				panic("exit")
-			}
-		}
-
-		return err
-	})
-
-	fmt.Println(templ.DefinedTemplates())
-	if err != nil {
-		panic(err)
-	}
-
-	return templ
 }

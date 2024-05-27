@@ -1,0 +1,23 @@
+You will be asked to produce a JSON object for the following request.
+
+{{ .Overview }}
+
+{{ if gt (len .Examples) 0 -}}
+Examples:
+=========
+{{- range .Examples }}
+{{ template "jreq" . }}
+---
+{{- end }}
+=========
+{{end}}
+
+Now, Here is the user request:
+{{ template "jreq" .Req }}
+{{- define "jreq" }}
+Input: {{ toJson .Input }}
+{{- if ne .Directions nil }}
+Directions: {{ .Directions }}
+{{ end }}
+Output: {{ if ne .Output nil }}{{ toJson .Output }}{{ else }}?{{ end }}
+{{ end }}
